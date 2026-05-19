@@ -1,6 +1,17 @@
 # Kopi Runner
 
-Simple static web app to capture and collate kopi and teh drink orders.
+Kopi Runner is a mobile-first static web app for collecting and collating kopi, teh, and special drink orders for a team.
+
+Paste a roster, tap a name, pick a drink, and generate a clean shareable summary for the coffee run without chasing messages across multiple chats.
+
+## What It Does
+
+- Organises kopi and teh options by common local drink families
+- Accepts pasted name lists from chat messages, numbered lists, or comma-separated rosters
+- Supports custom drink requests such as Milo Peng, Cham, or canned drinks
+- Collates duplicate orders into a single tally with per-person quantities
+- Generates a plain-text summary that can be copied straight into WhatsApp or Telegram
+- Saves both roster and orders in `localStorage` so the session survives refreshes
 
 ## Run
 
@@ -22,3 +33,11 @@ Then visit `http://localhost:8000`.
 - Live collated summary grouped by drink
 - Copyable plain-text summary for sending to a group chat
 - Local persistence with `localStorage`
+
+## Typical Flow
+
+1. Paste the attendee list into `Name list` and save it.
+2. Tap a person’s name or search it from the input.
+3. Choose a standard drink or type a special drink.
+4. Repeat until the list is complete.
+5. Copy the collated summary and send it to the drink stall or group chat.
