@@ -27,10 +27,6 @@
         <div class="card">
           <div class="card-heading">
             <h2>Name list</h2>
-            <div class="button-group">
-              <button id="save-roster" type="button" class="ghost">Save names</button>
-              <button id="clear-data" type="button" class="ghost subtle-action">Clear data</button>
-            </div>
           </div>
           <div class="quick-add-row">
             <label class="compact-label">
@@ -56,6 +52,10 @@
               spellcheck="false"
             ></textarea>
           </label>
+          <div class="button-group roster-actions">
+            <button id="save-roster" type="button" class="ghost">Save names</button>
+            <button id="clear-data" type="button" class="ghost subtle-action">Clear data</button>
+          </div>
           <p id="roster-count" class="helper-text">No saved names yet.</p>
           <div id="roster-chips" class="roster-chips empty-state">
             <p>No saved names yet.</p>
