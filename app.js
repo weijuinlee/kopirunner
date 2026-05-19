@@ -93,6 +93,7 @@ const drinkSelect = document.querySelector("#drink-select");
 const specialDrinkInput = document.querySelector("#special-drink");
 const quantityInput = document.querySelector("#quantity");
 const notesInput = document.querySelector("#notes");
+const newRosterNameInput = document.querySelector("#new-roster-name");
 const rosterInput = document.querySelector("#roster-input");
 const rosterCount = document.querySelector("#roster-count");
 const rosterChips = document.querySelector("#roster-chips");
@@ -100,7 +101,9 @@ const savedNames = document.querySelector("#saved-names");
 const ordersList = document.querySelector("#orders-list");
 const summaryList = document.querySelector("#summary-list");
 const summaryOutput = document.querySelector("#summary-output");
+const addRosterNameButton = document.querySelector("#add-roster-name");
 const saveRosterButton = document.querySelector("#save-roster");
+const clearDataButton = document.querySelector("#clear-data");
 const clearOrdersButton = document.querySelector("#clear-orders");
 const copySummaryButton = document.querySelector("#copy-summary");
 const orderItemTemplate = document.querySelector("#order-item-template");
@@ -145,9 +148,36 @@ orderForm.addEventListener("submit", (event) => {
 });
 
 saveRosterButton.addEventListener("click", () => {
-  roster = parseRoster(rosterInput.value);
-  persistRoster();
+  saveRosterFromTextarea();
+});
+
+addRosterNameButton.addEventListener("click", () => {
+  addRosterName(newRosterNameInput.value);
+});
+
+newRosterNameInput.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") {
+    return;
+  }
+
+  event.preventDefault();
+  addRosterName(newRosterNameInput.value);
+});
+
+clearDataButton.addEventListener("click", () => {
+  if (!orders.length && !roster.length) {
+    return;
+  }
+
+  orders = [];
+  roster = [];
+  orderForm.reset();
+  quantityInput.value = "1";
+  newRosterNameInput.value = "";
+  window.localStorage.removeItem(storageKey);
+  window.localStorage.removeItem(rosterStorageKey);
   renderRoster();
+  render();
 });
 
 clearOrdersButton.addEventListener("click", () => {
@@ -193,6 +223,28 @@ function populateDrinkSelect() {
 
     drinkSelect.append(optgroup);
   });
+}
+
+function saveRosterFromTextarea() {
+  roster = normalizeRoster(parseRoster(rosterInput.value));
+  persistRoster();
+  renderRoster();
+}
+
+function addRosterName(rawName) {
+  const cleanedName = cleanRosterLine(rawName);
+
+  if (!cleanedName || !isLikelyPersonName(cleanedName)) {
+    newRosterNameInput.focus();
+    return;
+  }
+
+  roster = normalizeRoster([...roster, cleanedName]);
+  persistRoster();
+  renderRoster();
+  newRosterNameInput.value = "";
+  customerNameInput.value = cleanedName;
+  customerNameInput.focus();
 }
 
 function renderRoster() {
@@ -374,11 +426,11 @@ function parseRoster(rawValue) {
   const hasLineBreaks = /\r|\n/.test(rawValue);
   const segments = hasLineBreaks ? rawValue.split(/\r?\n+/) : rawValue.split(/,+/);
 
-  return [...new Set(
+  return normalizeRoster(
     segments
       .map(cleanRosterLine)
       .filter((name) => name && isLikelyPersonName(name)),
-  )];
+  );
 }
 
 function cleanRosterLine(line) {
@@ -410,6 +462,21 @@ function isLikelyPersonName(value) {
   }
 
   return true;
+}
+
+function normalizeRoster(names) {
+  const seen = new Set();
+
+  return names.filter((name) => {
+    const key = name.trim().toLocaleLowerCase();
+
+    if (!key || seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
 }
 
 function createOrderId() {

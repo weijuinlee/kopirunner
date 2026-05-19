@@ -24,7 +24,25 @@
         <div class="card">
           <div class="card-heading">
             <h2>Name list</h2>
-            <button id="save-roster" type="button" class="ghost">Save names</button>
+            <div class="button-group">
+              <button id="save-roster" type="button" class="ghost">Save names</button>
+              <button id="clear-data" type="button" class="ghost subtle-action">Clear data</button>
+            </div>
+          </div>
+          <div class="quick-add-row">
+            <label class="compact-label">
+              Add one name
+              <input
+                id="new-roster-name"
+                name="newRosterName"
+                type="text"
+                placeholder="e.g. Alicia"
+                maxlength="40"
+              />
+            </label>
+            <button id="add-roster-name" type="button" class="primary secondary-primary">
+              Add name
+            </button>
           </div>
           <label>
             Paste names

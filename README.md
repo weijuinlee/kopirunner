@@ -8,10 +8,11 @@ Paste a roster, tap a name, pick a drink, and generate a clean shareable summary
 
 - Organises kopi and teh options by common local drink families
 - Accepts pasted name lists from chat messages, numbered lists, or comma-separated rosters
+- Lets you add extra names one by one without replacing the saved roster
 - Supports custom drink requests such as Milo Peng, Cham, or canned drinks
 - Collates duplicate orders into a single tally with per-person quantities
 - Generates a plain-text summary that can be copied straight into WhatsApp or Telegram
-- Saves both roster and orders in `localStorage` so the session survives refreshes
+- Saves both roster and orders in `localStorage` so the session survives refreshes until you clear them
 
 ## Run
 
@@ -28,11 +29,11 @@ Then visit `http://localhost:8000`.
 ## Features
 
 - Kopi and teh menu grouped into condensed milk, evaporated milk, and no-milk families
-- Saved name list with newline or comma paste support and tappable name chips
+- Saved name list with newline or comma paste support, one-by-one additions, and tappable name chips
 - Add orders with name, drink or special drink, quantity, and optional notes
 - Live collated summary grouped by drink
 - Copyable plain-text summary for sending to a group chat
-- Local persistence with `localStorage`
+- Local persistence with `localStorage` and a full clear-data reset
 
 ## Typical Flow
 
