@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kopi Runner</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Drink Run</p>
+        <h1>Kopi and teh orders without the message chaos.</h1>
+        <p class="intro">
+          Save your team roster, capture each person's drink, and collate the final tally instantly.
+        </p>
+      </section>
+
+      <section class="panel layout">
+        <div class="card">
+          <div class="card-heading">
+            <h2>Name list</h2>
+            <button id="save-roster" type="button" class="ghost">Save names</button>
+          </div>
+          <label>
+            Paste names
+            <textarea
+              id="roster-input"
+              class="roster-input"
+              placeholder="One name per line or separated by commas"
+              spellcheck="false"
+            ></textarea>
+          </label>
+          <p id="roster-count" class="helper-text">No saved names yet.</p>
+          <div id="roster-chips" class="roster-chips empty-state">
+            <p>No saved names yet.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Add order</h2>
+          <form id="order-form" class="order-form">
+            <label>
+              Name
+              <input
+                id="customer-name"
+                name="customerName"
+                type="text"
+                placeholder="e.g. Mei"
+                maxlength="40"
+                list="saved-names"
+                required
+              />
+            </label>
+            <datalist id="saved-names"></datalist>
+
+            <label>
+              Drink
+              <select id="drink-select" name="drink" required></select>
+            </label>
+
+            <label>
+              Special drink
+              <input
+                id="special-drink"
+                name="specialDrink"
+                type="text"
+                placeholder="e.g. Milo Peng, 100 Plus, Cham"
+                maxlength="60"
+              />
+            </label>
+
+            <div class="inline-fields">
+              <label>
+                Qty
+                <input
+                  id="quantity"
+                  name="quantity"
+                  type="number"
+                  min="1"
+                  max="12"
+                  value="1"
+                  required
+                />
+              </label>
+
+              <label>
+                Notes
+                <input
+                  id="notes"
+                  name="notes"
+                  type="text"
+                  placeholder="optional"
+                  maxlength="60"
+                />
+              </label>
+            </div>
+
+            <button type="submit" class="primary">Add to list</button>
+          </form>
+        </div>
+
+        <div class="card order-list-card">
+          <div class="card-heading">
+            <h2>Order list</h2>
+            <button id="clear-orders" type="button" class="ghost">Clear all</button>
+          </div>
+          <ul id="orders-list" class="orders-list empty-state">
+            <li>No orders yet.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="panel summary-grid">
+        <div class="card">
+          <h2>Collated summary</h2>
+          <div id="summary-list" class="summary-list empty-state">
+            <p>No drinks collated yet.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">
+            <h2>Shareable text</h2>
+            <button id="copy-summary" type="button" class="ghost">Copy</button>
+          </div>
+          <textarea
+            id="summary-output"
+            class="summary-output"
+            readonly
+            spellcheck="false"
+          ></textarea>
+        </div>
+      </section>
+
+      <section class="panel card reference-card">
+        <h2>Drink cheat sheet</h2>
+        <p class="reference-copy">
+          The app includes kopi and teh options, grouped by the common condensed milk,
+          evaporated milk, and no-milk families.
+        </p>
+        <div id="reference-groups" class="reference-groups"></div>
+      </section>
+    </main>
+
+    <template id="order-item-template">
+      <li class="order-item">
+        <div>
+          <strong class="order-name"></strong>
+          <p class="order-drink"></p>
+        </div>
+        <button type="button" class="remove-button">Remove</button>
+      </li>
+    </template>
+
+    <template id="summary-item-template">
+      <div class="summary-item">
+        <div>
+          <strong class="summary-title"></strong>
+          <p class="summary-meta"></p>
+        </div>
+        <span class="summary-qty"></span>
+      </div>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
