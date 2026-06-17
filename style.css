@@ -143,6 +143,7 @@ h2 {
 label {
   display: grid;
   gap: 0.5rem;
+  padding-top: 0.5rem;
   font-size: 0.9rem;
   font-weight: 700;
 }
