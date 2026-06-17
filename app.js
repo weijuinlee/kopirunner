@@ -210,6 +210,14 @@ copySummaryButton.addEventListener("click", async () => {
 function populateDrinkSelect() {
   drinkSelect.innerHTML = "";
 
+  // Add a placeholder as the first option
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Select a drink…";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  drinkSelect.append(placeholder);
+
   // Only show the short name for all drinks (no description or bullets)
   drinkCatalog.forEach(({ name }) => {
     const option = document.createElement("option");
