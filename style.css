@@ -70,8 +70,7 @@ body::after {
 }
 
 .eyebrow {
-  margin: 0 0 0.5rem;
-  font-size: 0.78rem;
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -297,6 +296,7 @@ button:hover {
 }
 
 .roster-input {
+  margin-bottom: 1rem;
   min-height: 8.25rem;
 }
 
