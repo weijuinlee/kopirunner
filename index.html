@@ -254,6 +254,57 @@
         window.addEventListener('scroll', checkScroll);
       })();
     </script>
+
+    <!-- Extended Analytics Events -->
+    <script>
+      // 1. Track Form Submissions (Order Form)
+      document.getElementById('order-form')?.addEventListener('submit', function() {
+        gtag('event', 'order_submitted');
+      });
+
+      // 2. Track Field Focus/Blur (on main input fields)
+      ['new-roster-name', 'roster-input', 'customer-name', 'special-drink', 'quantity', 'notes'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('focus', function() {
+            gtag('event', 'field_focus', { 'field_id': id });
+          });
+          el.addEventListener('blur', function() {
+            gtag('event', 'field_blur', { 'field_id': id });
+          });
+        }
+      });
+
+      // 3. Track Copy-to-Clipboard (summary)
+      document.getElementById('copy-summary')?.addEventListener('click', function() {
+        gtag('event', 'copy_summary', { 'element_id': 'copy-summary' });
+      });
+
+      // 4. Track Form Validation Errors (order form)
+      document.getElementById('order-form')?.addEventListener('invalid', function(e) {
+        gtag('event', 'form_validation_failed', {
+          'field_id': e.target.id,
+          'field_name': e.target.name
+        });
+      }, true); // useCapture to catch on any child
+
+      // 5. Track Navigation/Feature Usage
+      document.getElementById('add-roster-name')?.addEventListener('click', function() {
+        gtag('event', 'roster_add_one');
+      });
+      document.getElementById('save-roster')?.addEventListener('click', function() {
+        gtag('event', 'roster_save');
+      });
+      document.getElementById('clear-data')?.addEventListener('click', function() {
+        gtag('event', 'roster_clear');
+      });
+      document.getElementById('clear-orders')?.addEventListener('click', function() {
+        gtag('event', 'orders_clear');
+      });
+      document.getElementById('drink-select')?.addEventListener('change', function(e) {
+        gtag('event', 'drink_selected', { 'drink': e.target.value });
+      });
+    </script>
   </body>
 </html>
 
