@@ -210,18 +210,12 @@ copySummaryButton.addEventListener("click", async () => {
 function populateDrinkSelect() {
   drinkSelect.innerHTML = "";
 
-  drinkGroups.forEach((group) => {
-    const optgroup = document.createElement("optgroup");
-    optgroup.label = group.title;
-
-    group.drinks.forEach(([name, description]) => {
-      const option = document.createElement("option");
-      option.value = name;
-      option.textContent = `${name}  ${String.fromCharCode(183)}  ${description}`;
-      optgroup.append(option);
-    });
-
-    drinkSelect.append(optgroup);
+  // Only show the short name for all drinks (no description or bullets)
+  drinkCatalog.forEach(({ name }) => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    drinkSelect.append(option);
   });
 }
 
@@ -285,24 +279,19 @@ function renderRoster() {
 function renderReference() {
   referenceGroups.innerHTML = "";
 
-  drinkGroups.forEach((group) => {
-    const wrapper = document.createElement("section");
-    wrapper.className = "reference-group";
-
-    const heading = document.createElement("h3");
-    heading.textContent = group.title;
-
-    const list = document.createElement("ul");
-
-    group.drinks.forEach(([name, description]) => {
-      const item = document.createElement("li");
-      item.textContent = `${name}: ${description}`;
-      list.append(item);
-    });
-
-    wrapper.append(heading, list);
-    referenceGroups.append(wrapper);
+  // List all drinks by name only (no descriptions)
+  const wrapper = document.createElement("section");
+  wrapper.className = "reference-group";
+  const heading = document.createElement("h3");
+  heading.textContent = "All Drinks";
+  const list = document.createElement("ul");
+  drinkCatalog.forEach(({ name }) => {
+    const item = document.createElement("li");
+    item.textContent = name;
+    list.append(item);
   });
+  wrapper.append(heading, list);
+  referenceGroups.append(wrapper);
 }
 
 function render() {
