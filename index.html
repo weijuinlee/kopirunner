@@ -208,6 +208,52 @@
     </template>
 
     <script src="./app.js"></script>
+    
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SYRP1276WY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-SYRP1276WY');
+    </script>
+
+    <!-- Button Click Tracking -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('button').forEach(function(btn) {
+          btn.addEventListener('click', function(event) {
+            gtag('event', 'button_click', {
+              'button_text': event.target.textContent,
+              'button_id': event.target.id || undefined
+            });
+          });
+        });
+      });
+    </script>
+
+    <!-- Scroll Depth Tracking -->
+    <script>
+      (function() {
+        let scrollPoints = [25, 50, 75, 100];
+        let triggered = {};
+        function sendScrollEvent(pct) {
+          if (!triggered[pct]) {
+            gtag('event', 'scroll_depth', {'percent_scrolled': pct});
+            triggered[pct] = true;
+          }
+        }
+        function checkScroll() {
+          let scrollTop = window.scrollY || document.documentElement.scrollTop;
+          let docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          let percentScrolled = Math.floor((scrollTop / docHeight) * 100);
+          scrollPoints.forEach(function(pct) {
+            if (percentScrolled >= pct) sendScrollEvent(pct);
+          });
+        }
+        window.addEventListener('scroll', checkScroll);
+      })();
+    </script>
   </body>
 </html>
 
