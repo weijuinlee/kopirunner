@@ -66,7 +66,7 @@ body::after {
 }
 
 .hero {
-  padding: 0.35rem 0 1.1rem;
+  margin: 1rem;
 }
 
 .eyebrow {
@@ -478,3 +478,4 @@ button:hover {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
