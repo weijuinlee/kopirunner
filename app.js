@@ -278,20 +278,22 @@ function renderRoster() {
 
 function renderReference() {
   referenceGroups.innerHTML = "";
+  drinkGroups.forEach((group) => {
+    const wrapper = document.createElement("section");
+    wrapper.className = "reference-group";
 
-  // List all drinks by name only (no descriptions)
-  const wrapper = document.createElement("section");
-  wrapper.className = "reference-group";
-  const heading = document.createElement("h3");
-  heading.textContent = "All Drinks";
-  const list = document.createElement("ul");
-  drinkCatalog.forEach(({ name }) => {
-    const item = document.createElement("li");
-    item.textContent = name;
-    list.append(item);
+    const heading = document.createElement("h3");
+    heading.textContent = group.title;
+
+    const list = document.createElement("ul");
+    group.drinks.forEach(([name, description]) => {
+      const item = document.createElement("li");
+      item.textContent = `${name}: ${description}`;
+      list.append(item);
+    });
+    wrapper.append(heading, list);
+    referenceGroups.append(wrapper);
   });
-  wrapper.append(heading, list);
-  referenceGroups.append(wrapper);
 }
 
 function render() {
