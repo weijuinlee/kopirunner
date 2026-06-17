@@ -354,6 +354,9 @@ button:hover {
 }
 
 @media (max-width: 420px) {
+  .hero {
+    margin: 1.25rem 0.5rem 1.8rem 0.5rem;
+  }
   .shell {
     width: min(100% - 0.5rem, 100%);
   }
