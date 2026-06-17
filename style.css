@@ -458,6 +458,15 @@ button:hover {
   }
 }
 
+.site-footer {
+  text-align: center;
+  margin: 2.5rem 0 1rem 0;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+}
+
 @media (min-width: 920px) {
   .reference-groups {
     grid-template-columns: repeat(3, minmax(0, 1fr));
