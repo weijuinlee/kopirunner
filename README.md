@@ -68,3 +68,7 @@ Run the mobile behavior checks with `node --test tests/mobile.test.cjs`. Native 
 Run `node --test tests/*.test.cjs` for behavior and declared-color contrast checks. The interface includes focusable section destinations, visible focus rings, labelled fields, persistent screen-reader status announcements, and focus recovery after removing an order.
 
 Before release, check the rendered app at 320, 375, and 390 CSS pixels, with enlarged text and browser zoom. Verify there is no horizontal page scrolling, the bottom navigation does not obscure focused controls, and Share/Copy remain usable. Test keyboard navigation plus VoiceOver or TalkBack on a phone. Automated source-level checks do not replace these device checks.
+
+## Publishing asset updates
+
+After editing CSS, JavaScript, or HTML, run `python3 scripts/build-pwa.py` and then `node --test tests/*.test.cjs`. Commit the generated `assets/` files, `index.html`, and `sw.js` with the source changes. Content-versioned filenames prevent older iPhone browser or service-worker caches from supplying a different release’s CSS/JavaScript. The worker fetches its new shell with HTTP-cache reload enabled. Existing open apps keep the explicit Update and reload flow; saved names and orders are not cleared.

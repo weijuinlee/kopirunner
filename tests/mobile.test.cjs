@@ -97,3 +97,31 @@ test('navigation selection follows taps and the visible section', () => {
   assert.equal(links[2].attrs['aria-current'], 'location');
   assert.equal(links[3].attrs['aria-current'], undefined);
 });
+test('release HTML references content-matched bundles cached by the worker', () => {
+  const crypto = require('node:crypto');
+  const html = fs.readFileSync('index.html', 'utf8');
+  const worker = fs.readFileSync('sw.js', 'utf8');
+  const bundles = [...html.matchAll(/\.\/assets\/((style|app|pwa|navigation)\.([a-f0-9]{12})\.(css|js))/g)];
+  assert.equal(bundles.length, 4);
+  for (const [url, filename, name, digest, ext] of bundles) {
+    const source = fs.readFileSync(`${name}.${ext}`);
+    assert.equal(crypto.createHash('sha256').update(source).digest('hex').slice(0,12), digest);
+    assert.deepEqual(fs.readFileSync(`assets/${filename}`), source);
+    assert.ok(worker.includes(url));
+  }
+});
+test('worker installation bypasses stale HTTP assets', async () => {
+  const events = {};
+  let requests;
+  vm.runInNewContext(fs.readFileSync('sw.js', 'utf8'), {
+    URL, Set, Request,
+    caches: { open: async () => ({ addAll: async items => { requests = items; } }) },
+    self: { registration: { scope: 'https://example.com/kopirunner/' }, addEventListener: (name, fn) => events[name] = fn },
+  });
+  let done;
+  events.install({ waitUntil(promise) { done = promise; } });
+  await done;
+  assert.ok(requests.length > 4);
+  assert.ok(requests.every(request => request.cache === 'reload'));
+  assert.ok(requests.some(request => /\/assets\/style\.[a-f0-9]+\.css$/.test(request.url)));
+});
