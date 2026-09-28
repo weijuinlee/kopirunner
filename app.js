@@ -110,6 +110,30 @@ const orderItemTemplate = document.querySelector("#order-item-template");
 const summaryItemTemplate = document.querySelector("#summary-item-template");
 const referenceGroups = document.querySelector("#reference-groups");
 
+const shareSummaryButton = document.querySelector("#share-summary");
+let statusTimer;
+function notify(message) {
+  const status = document.querySelector("#app-status");
+  clearTimeout(statusTimer);
+  status.textContent = message;
+  document.querySelector("#app-announcement").textContent = message;
+  status.hidden = false;
+  statusTimer = setTimeout(() => { status.hidden = true; }, 6000);
+}
+
+shareSummaryButton.hidden = typeof navigator.share !== "function";
+shareSummaryButton.addEventListener("click", async () => {
+  if (!summaryOutput.value.trim()) return;
+  try {
+    await navigator.share({ title: "Kopi run summary", text: summaryOutput.value });
+  } catch (error) {
+    if (error.name !== "AbortError") notify("Sharing unavailable. Use Copy to share your summary.");
+  }
+});
+specialDrinkInput.addEventListener("input", () => {
+  drinkSelect.required = !specialDrinkInput.value.trim();
+});
+
 populateDrinkSelect();
 renderRoster();
 renderReference();
@@ -143,7 +167,9 @@ orderForm.addEventListener("submit", (event) => {
   persistOrders();
   render();
   orderForm.reset();
+  drinkSelect.required = true;
   quantityInput.value = "1";
+  notify(`${quantity} × ${drink.name} added for ${customerName}.`);
   customerNameInput.focus();
 });
 
@@ -169,9 +195,11 @@ clearDataButton.addEventListener("click", () => {
     return;
   }
 
+  if (!window.confirm("Clear all saved names and orders?")) return;
   orders = [];
   roster = [];
   orderForm.reset();
+  drinkSelect.required = true;
   quantityInput.value = "1";
   newRosterNameInput.value = "";
   window.localStorage.removeItem(storageKey);
@@ -185,6 +213,7 @@ clearOrdersButton.addEventListener("click", () => {
     return;
   }
 
+  if (!window.confirm("Clear all orders for this run?")) return;
   orders = [];
   persistOrders();
   render();
@@ -198,12 +227,14 @@ copySummaryButton.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(summaryOutput.value);
     copySummaryButton.textContent = "Copied";
+    notify("Summary copied to clipboard.");
     window.setTimeout(() => {
       copySummaryButton.textContent = "Copy";
     }, 1400);
   } catch {
     summaryOutput.focus();
     summaryOutput.select();
+    notify("Select and copy the summary using your browser’s menu.");
   }
 });
 
@@ -231,12 +262,14 @@ function saveRosterFromTextarea() {
   roster = normalizeRoster(parseRoster(rosterInput.value));
   persistRoster();
   renderRoster();
+  notify(`${roster.length} names saved.`);
 }
 
 function addRosterName(rawName) {
   const cleanedName = cleanRosterLine(rawName);
 
   if (!cleanedName || !isLikelyPersonName(cleanedName)) {
+    notify("Enter a name using letters, spaces, apostrophes, hyphens, or periods.");
     newRosterNameInput.focus();
     return;
   }
@@ -305,6 +338,9 @@ function renderReference() {
 }
 
 function render() {
+  document.querySelector("#order-count").textContent = orders.reduce((total, order) => total + order.quantity, 0);
+  copySummaryButton.disabled = !orders.length;
+  shareSummaryButton.disabled = !orders.length;
   renderOrders();
   renderSummary();
 }
@@ -331,6 +367,7 @@ function renderOrders() {
 
     nameNode.textContent = `${order.customerName} x${order.quantity}`;
     drinkNode.textContent = formatOrderLine(order);
+    removeButton.setAttribute("aria-label", `Delete ${order.drinkName} for ${order.customerName}`);
     removeButton.addEventListener("click", () => removeOrder(order.id));
 
     item.dataset.orderId = order.id;
@@ -356,7 +393,9 @@ function renderSummary() {
     const fragment = summaryItemTemplate.content.cloneNode(true);
     fragment.querySelector(".summary-title").textContent = entry.drinkName;
     fragment.querySelector(".summary-meta").textContent = entry.peopleLine;
-    fragment.querySelector(".summary-qty").textContent = `${entry.totalQty}`;
+    const quantityBadge = fragment.querySelector(".summary-qty");
+    quantityBadge.textContent = `${entry.totalQty}`;
+    quantityBadge.setAttribute("aria-label", `${entry.totalQty} ${entry.totalQty === 1 ? "cup" : "cups"}`);
     summaryList.append(fragment);
   });
 
@@ -487,9 +526,14 @@ function createOrderId() {
 }
 
 function removeOrder(orderId) {
+  const index = orders.findIndex((order) => order.id === orderId);
+  const removed = orders[index];
   orders = orders.filter((order) => order.id !== orderId);
   persistOrders();
   render();
+  const buttons = ordersList.querySelectorAll(".remove-button");
+  (buttons[Math.min(index, buttons.length - 1)] || document.querySelector("#order-list")).focus();
+  if (removed) notify(`Removed ${removed.drinkName} for ${removed.customerName}.`);
 }
 
 function loadOrders() {
@@ -517,4 +561,13 @@ function persistOrders() {
 
 function persistRoster() {
   window.localStorage.setItem(rosterStorageKey, JSON.stringify(roster));
+}
+
+// Reserve the actual bottom bar height, including large text and safe-area padding.
+if (typeof ResizeObserver !== "undefined") {
+  const navigation = document.querySelector(".mobile-nav");
+  new ResizeObserver(() => {
+    const height = navigation.getBoundingClientRect().height;
+    if (height) document.documentElement.style.setProperty("--nav-height", `${height}px`);
+  }).observe(navigation);
 }

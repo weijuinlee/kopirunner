@@ -4,45 +4,71 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <title>Drink Runner</title>
+    <title>KopiRunner</title>
     <meta
       name="description"
       content="Mobile-first drink order app for collecting kopi, teh, and special drink requests with roster paste, live tallying, and copyable summaries."
     />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>☕️</text></svg>">
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <meta name="theme-color" content="#8f431d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="KopiRunner" />
+    <script src="./pwa.js" defer></script>
     <link rel="stylesheet" href="./style.css" />
-    <style>
-      .site-footer {
-        text-align: center;
-        margin: 2.5rem 0 1rem 0;
-        color: var(--ink-soft);
-        font-size: 1rem;
-        opacity: 0.85;
-        letter-spacing: 0.02em;
-      }
-    </style>
   </head>
   <body>
-    <main class="shell">
+    <a class="skip-link" href="#add-order">Skip to add order</a>
+    <main class="shell" id="main-content">
       <section class="hero">
-        <p class="eyebrow">Drink Runner Assistant</p>
-        <h1>Collect kopi, teh, and custom drink orders in one clean list.</h1>
+        <p class="eyebrow">☕ KopiRunner</p>
+        <h1>Your next kopi run, sorted.</h1>
         <p class="intro">
-          Paste a roster, tap a name, add the order, and copy a collated summary when the run is ready.
+          Add your crew, take their orders, and share the tally.
         </p>
       </section>
 
+      <p id="connection-status" class="connection-status" role="status" hidden></p>
+      <div id="update-notice" class="card update-notice" hidden>
+        <p>A new version is ready. Finish adding your current order before updating.</p>
+        <button id="update-app" class="ghost" type="button">Update and reload</button>
+      </div>
+      <section id="install-card" class="panel card install-card" aria-labelledby="install-title" hidden>
+        <h2 id="install-title">☕ Add KopiRunner to your Home Screen</h2>
+        <p>Get one-tap access whenever you’re doing a kopi run.</p>
+        <div class="button-group">
+          <button id="install-app" class="primary" type="button" aria-controls="install-instructions" aria-expanded="false">Add to Home Screen</button>
+          <button id="dismiss-install" class="ghost" type="button">Not now</button>
+        </div>
+        <div id="install-instructions" hidden>
+          <ol id="install-ios-steps" hidden>
+            <li>Open this page in Safari if you’re using a chat app’s browser.</li>
+            <li>Tap <strong>Share ↑</strong> (you may find it in the browser menu).</li>
+            <li>Choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</li>
+          </ol>
+          <ol id="install-android-steps" hidden>
+            <li>Open this page in <strong>Chrome</strong> if you’re using a chat app’s browser.</li>
+            <li>Tap the <strong>⋮ menu</strong> in Chrome.</li>
+            <li>Choose <strong>Add to Home screen</strong> or <strong>Install app</strong>, then follow the confirmation steps.</li>
+          </ol>
+        </div>
+      </section>
+
       <section class="panel layout">
-        <div class="card">
+        <div class="card" id="crew" tabindex="-1" aria-labelledby="crew-title">
           <div class="card-heading">
-            <h2>Name list</h2>
+            <h2 id="crew-title">Name list</h2>
           </div>
           <div class="quick-add-row">
             <label class="compact-label">
               Add one name
               <input
+                autocomplete="off"
+                autocapitalize="words"
+                aria-describedby="roster-help"
                 id="new-roster-name"
                 name="newRosterName"
                 type="text"
@@ -54,9 +80,11 @@
               Add name
             </button>
           </div>
+          <p id="roster-help" class="helper-text">Add a name, or paste a list below. Tap a saved name to start their order.</p>
           <label>
             Paste names
             <textarea
+              aria-describedby="roster-help"
               id="roster-input"
               class="roster-input"
               placeholder="One name per line or separated by commas"
@@ -65,7 +93,7 @@
           </label>
           <div class="button-group roster-actions">
             <button id="save-roster" type="button" class="ghost">Save names</button>
-            <button id="clear-data" type="button" class="ghost subtle-action">Clear Names</button>
+            <button id="clear-data" type="button" class="ghost subtle-action">Clear names &amp; orders</button>
           </div>
           <p id="roster-count" class="helper-text">No saved names yet.</p>
           <div id="roster-chips" class="roster-chips empty-state">
@@ -73,12 +101,15 @@
           </div>
         </div>
 
-        <div class="card">
-          <h2>Add order</h2>
+        <div class="card" id="add-order" tabindex="-1" aria-labelledby="add-order-title">
+          <h2 id="add-order-title">Add order</h2>
           <form id="order-form" class="order-form">
+            <p id="drink-help" class="helper-text">Choose a drink or enter a special drink. A special drink replaces the selected drink.</p>
             <label>
-              Name
+              Name (required)
               <input
+                autocomplete="off"
+                autocapitalize="words"
                 id="customer-name"
                 name="customerName"
                 type="text"
@@ -92,12 +123,13 @@
 
             <label>
               Drink
-              <select id="drink-select" name="drink" required></select>
+              <select id="drink-select" name="drink" aria-describedby="drink-help" required></select>
             </label>
 
             <label>
               Special drink
               <input
+                aria-describedby="drink-help"
                 id="special-drink"
                 name="specialDrink"
                 type="text"
@@ -108,11 +140,12 @@
 
             <div class="inline-fields">
               <label>
-                Qty
+                Quantity
                 <input
                   id="quantity"
                   name="quantity"
                   type="number"
+                  inputmode="numeric"
                   min="1"
                   max="12"
                   value="1"
@@ -121,7 +154,7 @@
               </label>
 
               <label>
-                Notes
+                Notes (optional)
                 <input
                   id="notes"
                   name="notes"
@@ -136,9 +169,9 @@
           </form>
         </div>
 
-        <div class="card order-list-card">
+        <div class="card order-list-card" id="order-list" tabindex="-1" aria-labelledby="order-list-title">
           <div class="card-heading">
-            <h2>Order list</h2>
+            <h2 id="order-list-title">Order list</h2>
             <button id="clear-orders" type="button" class="ghost">Clear all</button>
           </div>
           <ul id="orders-list" class="orders-list empty-state">
@@ -147,20 +180,24 @@
         </div>
       </section>
 
-      <section class="panel summary-grid">
+      <section class="panel summary-grid" id="summary" tabindex="-1" aria-labelledby="summary-title">
         <div class="card">
-          <h2>Collated summary</h2>
+          <h2 id="summary-title">Collated summary</h2>
           <div id="summary-list" class="summary-list empty-state">
             <p>No drinks collated yet.</p>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-heading">
+          <div class="card-heading share-heading">
             <h2>Shareable text</h2>
-            <button id="copy-summary" type="button" class="ghost">Copy</button>
+            <div class="button-group share-actions">
+              <button id="share-summary" type="button" class="primary" hidden>Share</button>
+              <button id="copy-summary" type="button" class="ghost">Copy</button>
+            </div>
           </div>
           <textarea
+            aria-label="Order summary to copy or share"
             id="summary-output"
             class="summary-output"
             readonly
@@ -169,41 +206,47 @@
         </div>
       </section>
 
-      <section class="panel card reference-card">
-        <h2>Drink cheat sheet</h2>
+      <details class="panel card reference-card">
+        <summary>Drink cheat sheet</summary>
         <p class="reference-copy">
           The app includes kopi and teh options, grouped by the common condensed milk,
           evaporated milk, and no-milk families.
         </p>
         <div id="reference-groups" class="reference-groups"></div>
-      </section>
+      </details>
     </main>
 
     <footer class="site-footer">
-      Made with ❤️ and way too much ☕️
+      Made with ❤️ to bless kopi runs
+      <br>&copy; 2026 KopiRunner.
     </footer>
 
-    <footer class="site-footer">
-      &copy; 2026 Drink Runner.
-    </footer>
+    <nav class="mobile-nav" aria-label="Quick navigation">
+      <a href="#crew">Crew</a>
+      <a href="#add-order">Add order</a>
+      <a href="#order-list">Orders <span id="order-count" aria-hidden="true">0</span></a>
+      <a href="#summary">Summary</a>
+    </nav>
+    <p id="app-status" class="toast" aria-hidden="true" hidden></p>
+    <p id="app-announcement" class="sr-only" role="status" aria-atomic="true"></p>
 
     <template id="order-item-template">
       <li class="order-item">
-        <div>
-          <strong class="order-name"></strong>
-          <p class="order-drink"></p>
-        </div>
-        <button type="button" class="remove-button">Remove</button>
+        <strong class="order-name"></strong>
+        <button type="button" class="remove-button" aria-label="Delete order" title="Delete order">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M3 6h18M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M5 6l1 14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l1-14M10 10v7M14 10v7" />
+          </svg>
+        </button>
+        <p class="order-drink"></p>
       </li>
     </template>
 
     <template id="summary-item-template">
       <div class="summary-item">
-        <div>
-          <strong class="summary-title"></strong>
-          <p class="summary-meta"></p>
-        </div>
+        <strong class="summary-title"></strong>
         <span class="summary-qty"></span>
+        <p class="summary-meta"></p>
       </div>
     </template>
 

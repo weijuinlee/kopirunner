@@ -14,6 +14,8 @@
   --radius-lg: 28px;
   --radius-md: 18px;
   --radius-sm: 12px;
+  --control-border: #96765f;
+  --nav-height: 5rem;
 }
 
 * {
@@ -23,6 +25,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  line-height: 1.5;
   font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
   color: var(--ink);
   background:
@@ -147,7 +150,18 @@ label {
   font-weight: 700;
 }
 
-.button-group,
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.button-group > button {
+  width: auto;
+  flex: 0 1 auto;
+}
+
 .quick-add-row {
   display: grid;
   gap: 0.75rem;
@@ -167,9 +181,9 @@ button {
 input,
 select,
 textarea {
-  font-size: 16px;
+  font-size: 1rem;
   width: 100%;
-  border: 1px solid rgba(99, 59, 32, 0.15);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius-sm);
   background: var(--surface-strong);
   color: var(--ink);
@@ -177,7 +191,7 @@ textarea {
 
 input,
 select {
-  min-height: 2.85rem;
+  min-height: 48px;
   padding: 0.85rem 1rem;
 }
 
@@ -191,22 +205,35 @@ input:focus,
 select:focus,
 textarea:focus,
 button:focus {
-  outline: 2px solid rgba(143, 67, 29, 0.25);
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 
 button {
   cursor: pointer;
   border: 0;
-  border-radius: 999px;
+  border-radius: 14px;
+  line-height: 1.25;
+  text-align: center;
   transition:
     transform 120ms ease,
     background-color 120ms ease,
     color 120ms ease;
 }
 
-button:hover {
-  transform: translateY(-1px);
+@media (hover: hover) {
+  button:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .primary,
@@ -263,10 +290,10 @@ button:hover {
 
 .order-item,
 .summary-item {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  gap: 0.9rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
   padding: 1rem;
   border-radius: var(--radius-md);
   background: rgba(255, 248, 239, 0.92);
@@ -276,23 +303,50 @@ button:hover {
 .order-name,
 .summary-title {
   display: block;
-  margin-bottom: 0.2rem;
+  margin: 0;
 }
 
 .order-drink,
 .summary-meta {
+  grid-column: 1 / -1;
   margin: 0;
   font-size: 0.88rem;
 }
 
 .summary-qty {
-  min-width: 0;
-  padding: 0.45rem 0.7rem;
-  border-radius: 999px;
-  background: var(--ink);
-  color: #fff7f2;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid rgba(143, 67, 29, 0.16);
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 1rem;
+  line-height: 1;
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.remove-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--accent-strong);
+}
+
+.remove-button svg { pointer-events: none; }
+
+@media (hover: hover) {
+  .remove-button:hover:not(:disabled) { background: var(--accent-soft); }
 }
 
 .roster-input {
@@ -318,6 +372,7 @@ button:hover {
 }
 
 .chip {
+  border-radius: 999px;
   min-height: 0;
   padding: 0.58rem 0.82rem;
 }
@@ -406,7 +461,6 @@ button:hover {
   }
 
   .button-group {
-    grid-auto-flow: column;
     width: auto;
   }
 
@@ -447,16 +501,6 @@ button:hover {
     gap: 1rem;
   }
 
-  .order-item,
-  .summary-item {
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .summary-qty {
-    min-width: 3rem;
-  }
 }
 
 .site-footer {
@@ -492,3 +536,148 @@ button:hover {
   }
 }
 
+
+[hidden] {
+  display: none !important;
+}
+
+.install-card {
+  margin-bottom: 1rem;
+}
+
+.install-card h2 {
+  font-size: 1.35rem;
+  line-height: 1.3;
+}
+
+.install-card p,
+.install-card li {
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.install-card ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0;
+}
+
+/* Comfortable targets and compact navigation for one-handed use. */
+html { scroll-padding-top: 1rem; scroll-padding-bottom: calc(var(--nav-height) + 1rem); }
+body { min-height: 100dvh; }
+button, .chip { min-height: 48px; touch-action: manipulation; }
+button:disabled { opacity: .5; cursor: default; transform: none; }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.card, .card > *, .order-item > *, .summary-item > * { min-width: 0; }
+.order-name, .order-drink, .summary-meta, .chip { overflow-wrap: anywhere; }
+.reference-card > summary { cursor: pointer; font-weight: 700; font-size: 1.15rem; padding: .25rem 0; }
+.connection-status { padding: .75rem 1rem; border-radius: 12px; background: var(--accent-soft); color: var(--accent-strong); }
+.update-notice { margin: 1rem 0; }
+.update-notice p { margin-top: 0; line-height: 1.5; }
+.mobile-nav { display: none; }
+.toast { position: fixed; z-index: 10; left: 50%; bottom: calc(5.5rem + env(safe-area-inset-bottom)); transform: translateX(-50%); width: max-content; max-width: calc(100% - 2rem); padding: 1rem; border-radius: 16px; background: var(--ink); color: #fffaf2; box-shadow: var(--shadow); }
+@media (max-width: 699px) {
+  body { padding-bottom: calc(var(--nav-height) + 1rem); }
+  .shell { width: auto; margin-left: max(.75rem, env(safe-area-inset-left)); margin-right: max(.75rem, env(safe-area-inset-right)); }
+  .hero { margin: .75rem .25rem 1.5rem; }
+  .eyebrow { font-size: 1rem; letter-spacing: .04em; text-transform: none; margin: 0 0 .75rem; }
+  h1 { max-width: 20ch; font-size: clamp(1.85rem, 7.5vw, 2.6rem); line-height: 1.1; }
+  .intro { line-height: 1.5; margin-top: .75rem; }
+  .layout, .summary-grid { gap: .85rem; }
+  .card { box-shadow: 0 4px 14px rgba(91, 51, 24, .06); }
+  .card-heading { flex-direction: row; align-items: center; }
+  .card-heading h2 { flex: 1; }
+  .inline-fields { grid-template-columns: minmax(6.5rem, .6fr) minmax(0, 1fr); }
+  .install-card .button-group,
+  .roster-actions { flex-direction: column; align-items: stretch; gap: .5rem; }
+  .install-card .button-group > button,
+  .roster-actions > button { width: 100%; }
+  .card-heading .button-group { flex-wrap: wrap; gap: .5rem; }
+  .mobile-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: fixed; z-index: 5; bottom: 0; left: 0; right: 0; background: var(--surface-strong); border-top: 1px solid var(--line); padding: .4rem max(.4rem, env(safe-area-inset-right)) max(.4rem, env(safe-area-inset-bottom)) max(.4rem, env(safe-area-inset-left)); box-shadow: 0 -4px 20px rgba(91, 51, 24, .08); }
+  .mobile-nav a { display: flex; gap: .25rem; align-items: center; justify-content: center; min-height: 48px; text-decoration: none; color: var(--accent-strong); font-size: .8rem; font-weight: 700; border-radius: 12px; }
+  .mobile-nav a:active { background: var(--accent-soft); }
+  #order-count { background: var(--accent-soft); padding: .15rem .35rem; border-radius: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Keep secondary actions quiet without reducing their touch area. */
+#dismiss-install,
+.roster-actions .subtle-action {
+  background: transparent;
+  border: 1px solid var(--control-border);
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+@media (min-width: 700px) {
+  .install-card .button-group > .primary { flex: 1 1 auto; }
+}
+
+/* Give summary actions their own row so the title never squeezes them. */
+.card-heading.share-heading {
+  flex-direction: column;
+  align-items: stretch;
+  gap: .85rem;
+}
+
+.share-heading h2 {
+  line-height: 1.2;
+}
+
+.card-heading .share-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: .65rem;
+  width: 100%;
+}
+
+.share-actions > button {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 48px;
+  padding: .8rem .75rem;
+}
+
+/* Accessible reading order, focus destinations, and enlarged-text reflow. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: fixed;
+  z-index: 20;
+  top: .5rem;
+  left: .5rem;
+  padding: .75rem 1rem;
+  background: var(--ink);
+  color: var(--surface-strong);
+  border-radius: 12px;
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: none; }
+[tabindex="-1"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+input, select, textarea, button { max-width: 100%; min-width: 0; }
+input::placeholder, textarea::placeholder { color: var(--ink-soft); opacity: 1; }
+.card-heading { flex-wrap: wrap; }
+.card-heading h2 { flex-basis: 8rem; }
+.share-heading h2 { flex-basis: auto; }
+.reference-card > summary { min-height: 48px; padding-block: .6rem; }
+.mobile-nav a { min-width: 0; flex-wrap: wrap; overflow-wrap: anywhere; padding: .4rem .2rem; }
+@media (max-width: 360px) {
+  .inline-fields { grid-template-columns: minmax(0, 1fr); }
+}
+/* Free the small visible area while a field and its software keyboard are in use. */
+@media (max-width: 699px) {
+  body:has(input:focus, textarea:focus, select:focus) .mobile-nav { display: none; }
+}
+@media (forced-colors: active) {
+  button, .mobile-nav a { border: 1px solid ButtonText; }
+}
