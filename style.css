@@ -550,16 +550,12 @@ button:focus-visible {
   line-height: 1.3;
 }
 
-.install-card p,
-.install-card li {
+.install-card p {
   color: var(--ink-soft);
   line-height: 1.6;
 }
 
-.install-card ol {
-  padding-left: 1.5rem;
-  margin-bottom: 0;
-}
+
 
 /* Comfortable targets and compact navigation for one-handed use. */
 html { scroll-padding-top: 1rem; scroll-padding-bottom: calc(var(--nav-height) + 1rem); }
@@ -651,18 +647,6 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outli
   white-space: nowrap;
   border: 0;
 }
-.skip-link {
-  position: fixed;
-  z-index: 20;
-  top: .5rem;
-  left: .5rem;
-  padding: .75rem 1rem;
-  background: var(--ink);
-  color: var(--surface-strong);
-  border-radius: 12px;
-  transform: translateY(-200%);
-}
-.skip-link:focus { transform: none; }
 [tabindex="-1"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 input, select, textarea, button { max-width: 100%; min-width: 0; }
 input::placeholder, textarea::placeholder { color: var(--ink-soft); opacity: 1; }
@@ -680,4 +664,37 @@ input::placeholder, textarea::placeholder { color: var(--ink-soft); opacity: 1; 
 }
 @media (forced-colors: active) {
   button, .mobile-nav a { border: 1px solid ButtonText; }
+}
+
+/* Icon-and-label navigation with an explicit selected section. */
+.mobile-nav a {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: .25rem;
+  min-height: 64px;
+  padding: .5rem .15rem;
+  line-height: 1.2;
+  text-align: center;
+  border: 1px solid transparent;
+}
+.mobile-nav a[aria-current="location"] {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  border-color: var(--accent);
+}
+.nav-icon { position: relative; display: inline-flex; }
+.nav-icon svg { flex: none; }
+.mobile-nav #order-count {
+  position: absolute;
+  top: -.45rem;
+  left: 1rem;
+  min-width: 1rem;
+  padding: .1rem .25rem;
+  font-size: .65rem;
+  line-height: 1.2;
+  color: var(--surface-strong);
+  background: var(--accent-strong);
+}
+@media (forced-colors: active) {
+  .mobile-nav a[aria-current="location"] { border-color: Highlight; }
 }

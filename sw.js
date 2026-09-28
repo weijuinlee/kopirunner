@@ -1,7 +1,7 @@
 const CACHE_PREFIX = 'kopirunner-shell-';
-const CACHE_NAME = `${CACHE_PREFIX}v8`;
+const CACHE_NAME = `${CACHE_PREFIX}v10`;
 const SHELL = ['./', './index.html', './style.css', './app.js', './pwa.js',
-  './manifest.json', './icon-192.png', './icon-512.png'];
+  './navigation.js', './manifest.json', './icon-192.png', './icon-512.png'];
 const shellURLs = new Set(SHELL.map((path) => new URL(path, self.registration.scope).href));
 
 self.addEventListener('install', (event) => {

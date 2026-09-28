@@ -48,8 +48,6 @@ Then visit `http://localhost:8000`.
 Share https://weijuinlee.github.io/kopirunner/.
 
 - Supported Chromium browsers show **Install KopiRunner** once the browser makes its native installation prompt available.
-- Android also shows Chrome menu instructions when the native prompt is unavailable, including guidance for links opened inside chat apps.
-- iPhone and iPad show **Add to Home Screen** with Share-menu instructions. Open the link in Safari if it is inside a chat app browser.
 - The installation card can be dismissed and stays hidden when running as an installed standalone app.
 - After an initial online visit, the service worker saves the app shell for offline use. Orders and names continue to live in this browser’s local storage; installation does not sync data between browsers or devices.
 
@@ -67,6 +65,6 @@ Run the mobile behavior checks with `node --test tests/mobile.test.cjs`. Native 
 
 ## Accessibility checks
 
-Run `node --test tests/*.test.cjs` for behavior and declared-color contrast checks. The interface includes a skip link, focusable section destinations, visible focus rings, labelled fields, persistent screen-reader status announcements, and focus recovery after removing an order.
+Run `node --test tests/*.test.cjs` for behavior and declared-color contrast checks. The interface includes focusable section destinations, visible focus rings, labelled fields, persistent screen-reader status announcements, and focus recovery after removing an order.
 
 Before release, check the rendered app at 320, 375, and 390 CSS pixels, with enlarged text and browser zoom. Verify there is no horizontal page scrolling, the bottom navigation does not obscure focused controls, and Share/Copy remain usable. Test keyboard navigation plus VoiceOver or TalkBack on a phone. Automated source-level checks do not replace these device checks.

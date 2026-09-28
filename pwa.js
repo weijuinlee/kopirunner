@@ -1,28 +1,19 @@
 (() => {
   const card = document.getElementById('install-card');
   const button = document.getElementById('install-app');
-  const instructions = document.getElementById('install-instructions');
   const standalone = window.matchMedia('(display-mode: standalone)');
-  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const android = /Android/i.test(navigator.userAgent);
-  document.getElementById('install-ios-steps').hidden = !ios;
-  document.getElementById('install-android-steps').hidden = !android;
   let promptEvent = null;
   let dismissed = false;
   let installed = false;
 
   function render() {
     card.hidden = dismissed || installed || standalone.matches || navigator.standalone === true ||
-      (!ios && !android && !promptEvent);
-    button.textContent = promptEvent ? 'Install KopiRunner' : 'Add to Home Screen';
+      !promptEvent;
   }
 
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     promptEvent = event;
-    instructions.hidden = true;
-    button.setAttribute('aria-expanded', 'false');
     render();
   });
   window.addEventListener('appinstalled', () => {
@@ -36,11 +27,7 @@
     render();
   });
   button.addEventListener('click', async () => {
-    if (!promptEvent) {
-      instructions.hidden = !instructions.hidden;
-      button.setAttribute('aria-expanded', String(!instructions.hidden));
-      return;
-    }
+    if (!promptEvent) return;
     const event = promptEvent;
     promptEvent = null;
     button.disabled = true;
